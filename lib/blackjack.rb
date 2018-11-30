@@ -54,8 +54,8 @@ def hit?(prev_total)
     when "s"
       # Do nothing
     when "exit"
-      # Return
-      new_total = end_game(new_total)
+      # FIXED: This kicks out of the game early
+      new_total = "Let me out!"
     else
       # Handle unsupported commands
       invalid_command(user_response)
@@ -79,8 +79,9 @@ def runner
   user_exited = false
   until card_total > 21 || user_exited do
     did_user_hit = hit?(card_total)
-    user_exited = !!(did_user_hit.respond_to?(:include?) && did_user_hit.include?("Better luck next time!"))
-    if user_exited == false
+    # If #hit? returns a String and it contains the request to leave the game, set user_exited to true
+    user_exited = !!(did_user_hit.respond_to?(:include?) && did_user_hit.include?("Let me out!"))
+    if !user_exited
       card_total = did_user_hit
       display_card_total(card_total)
     end
